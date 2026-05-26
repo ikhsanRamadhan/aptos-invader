@@ -40,7 +40,7 @@ const ShipStats: FC<ShipStatsProps> = ({ ship }) => {
 
 const Store: FC = () => {
     const router = useRouter();
-    const { spaceshipAdmin, mySpaceships, allSellers, listedNfts, handleMint, fundWallet, getAllItems, getAllSellers, getAllListedNfts } = useAppContext();
+    const { adminAddress, mySpaceships, allSellers, listedNfts, handleMint, fundWallet, getAllItems, getAllSellers, getAllListedNfts } = useAppContext();
     const { userAddress } = useUserContext();
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -60,8 +60,8 @@ const Store: FC = () => {
             return;
         }
 
-        if (spaceshipAdmin && userAddress) {
-            await handleMint(spaceshipAdmin, userAddress, ship.price, ship);
+        if (adminAddress && userAddress) {
+            await handleMint(adminAddress, userAddress, ship.price, ship);
         }
         
         console.log(ship.name);
@@ -82,10 +82,10 @@ const Store: FC = () => {
 
     useEffect(() => {
         getAllItems();
-        if (spaceshipAdmin) {
-            getAllSellers(spaceshipAdmin);
+        if (adminAddress) {
+            getAllSellers(adminAddress);
         }
-    }, [spaceshipAdmin]);
+    }, [adminAddress]);
 
     useEffect(() => {
         const fetchListedNfts = async () => {
@@ -95,7 +95,7 @@ const Store: FC = () => {
         };
 
         fetchListedNfts();
-    },[allSellers, spaceshipAdmin]);
+    },[allSellers, adminAddress]);
 
     return (
         <div style={{ minHeight: '75vh' }} className='flex flex-col gap-6 justify-center mt-20'>

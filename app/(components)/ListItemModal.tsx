@@ -21,7 +21,7 @@ interface ListItemModalProps {
 };
 
 const ListItemModal: FC<ListItemModalProps> = ({ open, item, handleClose }) => {
-    const { spaceshipAdmin, handleListItem } = useAppContext();
+    const { adminAddress, handleListItem } = useAppContext();
     const { userAddress } = useUserContext();
     const [price, setPrice] = useState<string>('');
 
@@ -53,8 +53,8 @@ const ListItemModal: FC<ListItemModalProps> = ({ open, item, handleClose }) => {
     const handleList = async (e: FormEvent) => {
         e.preventDefault();
         console.log("Listing item:", item);
-        if (price && spaceshipAdmin && userAddress) {
-            await handleListItem(spaceshipAdmin, userAddress, item, price);
+        if (price && adminAddress && userAddress) {
+            await handleListItem(adminAddress, userAddress, item, price);
             handleClose();
         }
     };

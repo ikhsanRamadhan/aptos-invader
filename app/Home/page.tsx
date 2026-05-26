@@ -15,7 +15,7 @@ import { bosses } from '../utils/enemy';
 const Homepage = () => {
     const router = useRouter();
     const { userAddress } = useUserContext();
-    const { spaceshipAdmin, mySpaceships, allUserStats, fetchAllUserStats } = useAppContext();
+    const { adminAddress, mySpaceships, allUserStats, fetchAllUserStats } = useAppContext();
     const [hp, setHp] = useState<number>();
     const [scores, setScores] = useState(0);
     const [ship, setShip] = useState();
@@ -103,13 +103,13 @@ const Homepage = () => {
 
     useEffect(() => {
         const fetchAllUserData = async () => {
-            if (spaceshipAdmin) {
-                await fetchAllUserStats(spaceshipAdmin);
+            if (adminAddress) {
+                await fetchAllUserStats(adminAddress);
             }
         };
 
         fetchAllUserData();
-    }, [spaceshipAdmin]);
+    }, [adminAddress]);
 
     useEffect(() => {
         console.log(allUserStats);

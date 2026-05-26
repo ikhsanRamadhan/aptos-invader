@@ -26,14 +26,14 @@ const getRarityColor = (rarity: string): string => {
 };
 
 const ListedItems: FC<Props> = ({ isLoading, currentItems, totalPages, handleChangePage }) => {
-    const { spaceshipAdmin, listedNfts, handlePurchaseItem, } = useAppContext();
+    const { adminAddress, listedNfts, handlePurchaseItem, } = useAppContext();
     const { userAddress } = useUserContext();
     const [ buttonLoading, setButtonLoading ] = useState(false);
 
     const handleBuy = async (item: any) => {
         setButtonLoading(true);
-        if (spaceshipAdmin && userAddress) {
-            await handlePurchaseItem(spaceshipAdmin, userAddress, item);
+        if (adminAddress && userAddress) {
+            await handlePurchaseItem(adminAddress, userAddress, item);
             setButtonLoading(false);
         }
         setButtonLoading(false);

@@ -9,7 +9,7 @@ import { useUserContext } from '../context/UserContext';
 
 const ItemStore = () => {
     const { userAddress } = useUserContext();
-    const { spaceshipAdmin, allSellers, listedNfts, getAllListedNfts, handlePurchaseItem, getAllItems, getAllSellers } = useAppContext();
+    const { adminAddress, allSellers, listedNfts, getAllListedNfts, handlePurchaseItem, getAllItems, getAllSellers } = useAppContext();
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,8 +18,8 @@ const ItemStore = () => {
 
     const handleBuy = async (item: any) => {
         setButtonLoading(true);
-        if (spaceshipAdmin && userAddress) {
-            await handlePurchaseItem(spaceshipAdmin, userAddress, item);
+        if (adminAddress && userAddress) {
+            await handlePurchaseItem(adminAddress, userAddress, item);
             setButtonLoading(false);
         }
         setButtonLoading(false);
@@ -52,8 +52,8 @@ const ItemStore = () => {
 
     useEffect(() => {
         getAllItems();
-        if (spaceshipAdmin) {
-            getAllSellers(spaceshipAdmin);
+        if (adminAddress) {
+            getAllSellers(adminAddress);
         }
 
         const fetchListedNfts = async () => {
@@ -63,7 +63,7 @@ const ItemStore = () => {
         };
 
         fetchListedNfts();
-    }, [spaceshipAdmin, allSellers]);
+    }, [adminAddress, allSellers]);
 
     return (
         <div style={{ minHeight: '75vh' }} className='flex flex-col gap-6 justify-center mt-20'>

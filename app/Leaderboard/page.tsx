@@ -44,20 +44,20 @@ const darkTheme = createTheme({
 
 const Leaderboard = () => {
     const { userAddress } = useUserContext();
-    const { spaceshipAdmin, allUserStats, fetchAllUserStats } = useAppContext();
+    const { adminAddress, allUserStats, fetchAllUserStats } = useAppContext();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [myPosition, setMyPosition] = useState<number>(0);
     const usersPerPage = 20;
 
     useEffect(() => {
         const fetchDataUsers = async () => {
-            if (spaceshipAdmin) {
-                await fetchAllUserStats(spaceshipAdmin);
+            if (adminAddress) {
+                await fetchAllUserStats(adminAddress);
             }
         };
 
         fetchDataUsers();
-    }, [spaceshipAdmin]);
+    }, [adminAddress]);
 
     // Calculate the total number of pages
     const totalPages = Math.ceil(allUserStats.length / usersPerPage);

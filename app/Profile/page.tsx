@@ -10,7 +10,7 @@ const Profile = () => {
     const { userAddress } = useUserContext();
     const { 
         fetchUserStats, 
-        spaceshipAdmin, 
+        adminAddress, 
         mySpaceships, 
         myItems,
         ownedItems, 
@@ -36,14 +36,14 @@ const Profile = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (spaceshipAdmin && userAddress) {
-                await fetchUserStats(spaceshipAdmin, userAddress);
-                await fetchItemsCollectionAddress(spaceshipAdmin);
+            if (adminAddress && userAddress) {
+                await fetchUserStats(adminAddress, userAddress);
+                await fetchItemsCollectionAddress(adminAddress);
             }
         }
 
         fetchData();
-    }, [spaceshipAdmin, userAddress]);
+    }, [adminAddress, userAddress]);
 
     useEffect(() => {
         const index = allUserStats.findIndex(user => user.addr === userAddress?.toString());
