@@ -13,20 +13,18 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import CircularProgress from '@mui/material/CircularProgress';
 import type { MenuProps } from 'antd';
 import { Dropdown, Typography } from 'antd';
-import {
-    useWallet
-} from "@aptos-labs/wallet-adapter-react";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import dynamic from "next/dynamic";
 
 import { useAutoConnect } from '../provider/AutoConnectProvider';
 import { useAlert } from "../provider/AlertProvider";
 import { useUserContext } from '../context/UserContext';
-import { useAppContext, SPACESHIP_ADMIN_PRIVATEKEY } from '../context/AppContext';
+import { useAppContext } from '../context/AppContext'; // SPACESHIP_ADMIN_PRIVATEKEY dihapus
 import spaceships from '../utils/spaceships';
 
 const pages = [
-    {name:'Home', link: '/'},
-    {name: 'Store', link: '/Store'},
+    { name: 'Home', link: '/' },
+    { name: 'Store', link: '/Store' },
 ];
 
 const Header = () => {
@@ -34,15 +32,15 @@ const Header = () => {
     const pathName = usePathname();
     const { account, connected, disconnect, wallet } = useWallet();
     const { notification, setNotification } = useAlert();
-    const { fetchUserAddress, setUserAddress , userAddress} = useUserContext();
-    const { 
-        myBalance, 
-        setSpaceshipAdmin, 
-        fetchAdminAccount, 
-        fetchBalance, 
-        fetchSpaceships, 
+    const { fetchUserAddress, setUserAddress, userAddress } = useUserContext();
+    const {
+        myBalance,
+        adminAddress,
+        fetchAdminAddress,
+        fetchBalance,
+        fetchSpaceships,
         mySpaceships,
-        getUserOwnedItems, 
+        getUserOwnedItems,
     } = useAppContext();
     const { setAutoConnect } = useAutoConnect();
     const { Paragraph } = Typography;
@@ -79,9 +77,7 @@ const Header = () => {
                     Clear all notifications
                 </div>
             ) : (
-                <div>
-                    No Notifications
-                </div>
+                <div>No Notifications</div>
             )
         }
     ];
@@ -91,12 +87,9 @@ const Header = () => {
             key: 1,
             label: (
                 <Tooltip placement="left" arrow={false} color='#091a1f' title="My Profile" overlayClassName='min-w-min'>
-                <Paragraph
-                    onClick={handleAddressClick}
-                    className='pt-3'
-                >
-                    {account ? `0x${account.address.substring(2, 6)}...${account.address.substring(account.address.length - 5, account.address.length)}` : ''}
-                </Paragraph>
+                    <Paragraph onClick={handleAddressClick} className='pt-3'>
+                        {account ? `0x${account.address.substring(2, 6)}...${account.address.substring(account.address.length - 5)}` : ''}
+                    </Paragraph>
                 </Tooltip>
             )
         },
@@ -113,14 +106,12 @@ const Header = () => {
     const WalletSelectorAntDesign = dynamic(
         () => import("../(components)/WalletSelectorAntDesign"),
         {
-            loading: () => {
-                return <CircularProgress color="secondary" size={30} className='mr-8'/>
-            },
+            loading: () => <CircularProgress color="secondary" size={30} className='mr-8' />,
             suspense: false,
             ssr: false,
         }
     );
-    
+
     useEffect(() => {
         setBadge(notification.length);
     }, [notification]);
@@ -131,105 +122,90 @@ const Header = () => {
     }, [account]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (userAddress) {
-                await getUserOwnedItems(userAddress.toString());
-            }
-        };
-
-        fetchData();
-
-    },[userAddress]);
+        if (!userAddress) return;
+        getUserOwnedItems(userAddress.toString());
+    }, [userAddress]);
 
     useEffect(() => {
-        if (SPACESHIP_ADMIN_PRIVATEKEY && userAddress) {
-            const spaceshipAdminAccount = fetchAdminAccount(SPACESHIP_ADMIN_PRIVATEKEY);
-            spaceshipAdminAccount.then((adminAccount: any) => {
-                setSpaceshipAdmin(adminAccount);
-                spaceships.forEach((ship: any, index: number) => {
-                    if (index > 0) {
-                        fetchSpaceships(adminAccount, userAddress, ship.name);
-                    }
-                });
-            })
+        if (!userAddress) return;
+
+        const init = async () => {
+            const addr = adminAddress ?? await fetchAdminAddress();
+            if (!addr) return;
+
+            spaceships.forEach((ship: any, index: number) => {
+                if (index > 0) {
+                    fetchSpaceships(addr, userAddress, ship.name);
+                }
+            });
 
             fetchBalance(userAddress);
-        }
+        };
 
+        init();
     }, [userAddress, mySpaceships]);
 
     useEffect(() => {
-        if (pathName === '/') {
-            setCurrentPage('Home');
-        } else if (pathName === '/Store') {
-            setCurrentPage('Store');
-        } else if (pathName === '/Profile') {
-            setCurrentPage('Profile');
-        } else if (pathName === '/Leaderboard') {
-            setCurrentPage('Leaderboard');
-        }
-    },[pathName]);
+        const map: Record<string, string> = {
+            '/': 'Home',
+            '/Store': 'Store',
+            '/Profile': 'Profile',
+            '/Leaderboard': 'Leaderboard',
+        };
+        setCurrentPage(map[pathName] ?? '');
+    }, [pathName]);
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="fixed" color='transparent'>
-            <Toolbar className='flex place-items-center'>
-                <div className='flex gap-4'>
-                    <img src='aptos_word_dark.svg' className='max-h-10'/>
-                    <div className='text-4xl text-[#e3e3e3]'>INVADERS</div>
-                </div>
+            <AppBar position="fixed" color='transparent'>
+                <Toolbar className='flex place-items-center'>
+                    <div className='flex gap-4'>
+                        <img src='aptos_word_dark.svg' className='max-h-10' />
+                        <div className='text-4xl text-[#e3e3e3]'>INVADERS</div>
+                    </div>
 
-                <Box sx={{ display: { xs: 'none', sm: 'block' } }} className="flex space-x-2 place-items-center ml-6">
-                    {pages.map((page) => (
-                    <Button key={page.name} sx={{color: 'white'}} className={`font-semibold bg-[#091a1f] hover:border hover:rounded-full hover: px-6 py-2 rounded-full ${currentPage === page.name ? 'bg-[#f5f5f5] text-[#091a1f] hover:text-[#f5f5f5]' : ''}`}>
-                        <Link href={page.link}>{page.name}</Link>
-                    </Button>
-                    ))}
-                </Box>
-
-                <Box sx={{ flexGrow: 1 }} />
-                {connected ? (
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }} className='gap-5'>
-                        <div className='flex w-auto place-content-center place-self-center bg-[#091a1f] px-4 py-2 rounded-full gap-5'>
-                            <div className='place-self-center text-xs text-center text-white'>
-                                Aptos Coin
-                            </div>
-                            <div className='flex place-content-center text-center bg-gray-700 px-4 py-1 w-auto rounded-full text-sm'>
-                                <div>{myBalance} APT</div>
-                            </div>
-                        </div>
-
-                        <Dropdown menu={{ items: notifications, style:{maxHeight: '50vh', overflow: 'scroll', paddingTop: '10px', paddingBottom: '10px'}, className: 'notification' }} placement="bottomRight" arrow={{ pointAtCenter: true }} className='hover:text-[#25fff2]'>
-                            <IconButton
-                                size="medium"
-                                aria-label={`show ${badge} new notifications`}
-                                color="inherit"
-                            >
-                                <Badge badgeContent={badge} color="error">
-                                    <NotificationsIcon />
-                                </Badge>
-                            </IconButton>
-                        </Dropdown>
-                        
-                        <Dropdown menu={{ items: profile, className: 'grid place-content-center text-center' }} trigger={['click']} placement="bottomRight">
-                            <button className='flex gap-2 px-2 rounded-md border hover:text-[#25fff2] hover:border-[#25fff2]'>
-                                <img
-                                    src={wallet?.icon}
-                                    className='size-6 place-self-center'
-                                />
-                                <div className="place-self-center">
-                                    {account ? `0x${account.address.substring(2, 6)}...${account.address.substring(account.address.length - 5, account.address.length)}` : ''}
-                                </div>
-                            </button>
-                        </Dropdown>
+                    <Box sx={{ display: { xs: 'none', sm: 'block' } }} className="flex space-x-2 place-items-center ml-6">
+                        {pages.map((page) => (
+                            <Button key={page.name} sx={{ color: 'white' }} className={`font-semibold bg-[#091a1f] hover:border hover:rounded-full px-6 py-2 rounded-full ${currentPage === page.name ? 'bg-[#f5f5f5] text-[#091a1f] hover:text-[#f5f5f5]' : ''}`}>
+                                <Link href={page.link}>{page.name}</Link>
+                            </Button>
+                        ))}
                     </Box>
-                ) : (
-                    <WalletSelectorAntDesign/>
-                )}
-            </Toolbar>
-        </AppBar>
+
+                    <Box sx={{ flexGrow: 1 }} />
+                    {connected ? (
+                        <Box sx={{ display: { xs: 'none', md: 'flex' } }} className='gap-5'>
+                            <div className='flex w-auto place-content-center place-self-center bg-[#091a1f] px-4 py-2 rounded-full gap-5'>
+                                <div className='place-self-center text-xs text-center text-white'>Aptos Coin</div>
+                                <div className='flex place-content-center text-center bg-gray-700 px-4 py-1 w-auto rounded-full text-sm'>
+                                    <div>{myBalance} APT</div>
+                                </div>
+                            </div>
+
+                            <Dropdown menu={{ items: notifications, style: { maxHeight: '50vh', overflow: 'scroll', paddingTop: '10px', paddingBottom: '10px' }, className: 'notification' }} placement="bottomRight" arrow={{ pointAtCenter: true }} className='hover:text-[#25fff2]'>
+                                <IconButton size="medium" aria-label={`show ${badge} new notifications`} color="inherit">
+                                    <Badge badgeContent={badge} color="error">
+                                        <NotificationsIcon />
+                                    </Badge>
+                                </IconButton>
+                            </Dropdown>
+
+                            <Dropdown menu={{ items: profile, className: 'grid place-content-center text-center' }} trigger={['click']} placement="bottomRight">
+                                <button className='flex gap-2 px-2 rounded-md border hover:text-[#25fff2] hover:border-[#25fff2]'>
+                                    <img src={wallet?.icon} className='size-6 place-self-center' />
+                                    <div className="place-self-center">
+                                        {account ? `0x${account.address.substring(2, 6)}...${account.address.substring(account.address.length - 5)}` : ''}
+                                    </div>
+                                </button>
+                            </Dropdown>
+                        </Box>
+                    ) : (
+                        <WalletSelectorAntDesign />
+                    )}
+                </Toolbar>
+            </AppBar>
         </Box>
     );
-}
+};
 
 export default Header;
