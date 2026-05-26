@@ -38,4 +38,4 @@ Experience the future of gaming where every achievement is truly yours. Ready to
 
 Here's a video demonstrating how to use the app.
 
-[![aptos-invader-demo](https://img.youtube.com/vi/JLj2ZM_2rpE/0.jpg)](https://www.youtube.com/watch?v=JLj2ZM_2rpE)<img width="1115" height="487" alt="aptos-invader-email" src="https://github.com/user-attachments/assets/ebf078e9-9048-4d89-bf0c-36abea146520" />
+[![aptos-invader-demo](https://img.youtube.com/vi/JLj2ZM_2rpE/0.jpg)](https://www.youtube.com/watch?v=JLj2ZM_2rpE)
