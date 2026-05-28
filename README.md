@@ -17,6 +17,7 @@ We are proud to announce that **Aptos Invader** is the **1st Place Winner** of *
   <br>
   <p><i>Project selected as the champion out of a highly competitive global talent pool.</i></p>
   <img width="1115" height="487" alt="aptos-invader-email" src="https://github.com/user-attachments/assets/a4376081-4c5a-4a4e-86ed-ba45c459fe0e" />
+  <img width="1726" height="817" alt="aptos-invader-email2" src="https://github.com/user-attachments/assets/9e27cc99-492a-457b-9265-ebd66a208242" />
 </details>
 
 ---
